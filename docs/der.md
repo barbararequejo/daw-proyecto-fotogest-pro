@@ -45,8 +45,8 @@ erDiagram
     }
 
     SESION_SERVICIO {
-        BIGINT id_sesion FK
-        BIGINT id_servicio FK
+        BIGINT id_sesion PK, FK
+        BIGINT id_servicio PK, FK
         DECIMAL precio_pactado
         INT duracion_minutos
         TEXT extras_incluidos
