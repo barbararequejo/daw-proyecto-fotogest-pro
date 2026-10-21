@@ -35,7 +35,7 @@ Estas tecnologías son la propuesta inicial del anteproyecto y podrán concretar
 
 ## Tablero Kanban
 
-Pendiente de añadir la URL del tablero GitHub Projects.
+https://github.com/users/barbararequejo/projects/1
 
 ## Documentación
 
