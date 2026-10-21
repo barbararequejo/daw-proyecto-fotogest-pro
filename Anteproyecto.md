@@ -7,7 +7,7 @@
 **Autora:** Bárbara Álvarez Requejo  
 **Tutor:** Pablo Lera Menéndez  
 **Repositorio GitHub:** https://github.com/barbararequejo/daw-proyecto-fotogest-pro  
-**Tablero GitHub Projects:** [Añadir URL cuando esté creado]
+**Tablero GitHub Projects:** https://github.com/users/barbararequejo/projects/1
 
 ---
 
