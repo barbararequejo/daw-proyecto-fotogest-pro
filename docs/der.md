@@ -2,142 +2,126 @@
 
 ## 1. Descripción
 
-El modelo de datos de FotoGest Pro permite gestionar los clientes, el catálogo de servicios fotográficos, las sesiones, los pagos y las fotografías de las galerías privadas.
+El modelo de datos de FotoGest Pro gestiona los clientes, el catálogo de servicios fotográficos, las sesiones, los pagos y las fotografías de las galerías privadas. Está normalizado en tercera forma normal (3FN) y se implementa en MySQL mediante migraciones de Laravel (`backend/database/migrations`).
 
-El diseño se organiza en entidades relacionadas entre sí para evitar duplicidades y mantener la integridad de la información.
+El modelo tiene **cinco entidades de negocio** (`clientes`, `servicios_fotograficos`, `sesiones_citas`, `pagos` y `fotografias_galeria`), una **tabla intermedia con atributos propios** (`sesion_servicio`) y una **tabla técnica de autenticación** (`users`), que no computa como entidad de negocio.
 
 ## 2. Diagrama entidad-relación
 
 ```mermaid
 erDiagram
+    USERS ||--o| CLIENTES : "tiene ficha"
     CLIENTES ||--o{ SESIONES_CITAS : solicita
     SESIONES_CITAS ||--|{ SESION_SERVICIO : incluye
-    SERVICIOS_FOTOGRAFICOS ||--o{ SESION_SERVICIO : se_contrata_en
+    SERVICIOS_FOTOGRAFICOS ||--o{ SESION_SERVICIO : "se contrata en"
     SESIONES_CITAS ||--o{ PAGOS : tiene
     SESIONES_CITAS ||--o{ FOTOGRAFIAS_GALERIA : contiene
 
+    USERS {
+        BIGINT_UNSIGNED id PK
+        VARCHAR_150 email UK
+        VARCHAR_255 password "hash bcrypt"
+        ENUM rol "admin | cliente"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
     CLIENTES {
-        BIGINT id_cliente PK
-        VARCHAR nombre
-        VARCHAR apellidos
-        VARCHAR email UK
-        VARCHAR telefono
-        VARCHAR password_hash
-        DATETIME fecha_registro
+        BIGINT_UNSIGNED id PK
+        BIGINT_UNSIGNED user_id FK,UK
+        VARCHAR_80 nombre
+        VARCHAR_120 apellidos
+        VARCHAR_20 telefono "nullable"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     SERVICIOS_FOTOGRAFICOS {
-        BIGINT id_servicio PK
-        VARCHAR nombre
+        BIGINT_UNSIGNED id PK
+        VARCHAR_100 nombre UK
         TEXT descripcion
-        DECIMAL precio_base
-        INT duracion_minutos
-        BOOLEAN disponible
+        DECIMAL_8_2 precio_base "CHECK >= 0"
+        SMALLINT_UNSIGNED duracion_minutos "CHECK > 0"
+        BOOLEAN disponible "default true"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     SESIONES_CITAS {
-        BIGINT id_sesion PK
-        BIGINT id_cliente FK
+        BIGINT_UNSIGNED id PK
+        BIGINT_UNSIGNED cliente_id FK
         DATETIME fecha_solicitada
-        DATETIME fecha_confirmada
-        VARCHAR estado
-        TEXT observaciones
+        DATETIME fecha_confirmada "nullable"
+        VARCHAR_150 lugar "nullable"
+        ENUM estado "pendiente | aceptada | rechazada | realizada | cancelada"
+        TEXT observaciones "nullable"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     SESION_SERVICIO {
-        BIGINT id_sesion PK, FK
-        BIGINT id_servicio PK, FK
-        DECIMAL precio_pactado
-        INT duracion_minutos
-        TEXT extras_incluidos
+        BIGINT_UNSIGNED sesion_id PK,FK
+        BIGINT_UNSIGNED servicio_id PK,FK
+        DECIMAL_8_2 precio_pactado "CHECK >= 0"
+        SMALLINT_UNSIGNED duracion_minutos "CHECK > 0"
+        VARCHAR_255 extras_incluidos "nullable"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     PAGOS {
-        BIGINT id_pago PK
-        BIGINT id_sesion FK
-        DECIMAL importe
+        BIGINT_UNSIGNED id PK
+        BIGINT_UNSIGNED sesion_id FK
+        DECIMAL_8_2 importe "CHECK > 0"
         DATE fecha_pago
-        VARCHAR estado
-        VARCHAR metodo_pago
+        ENUM estado "pendiente | pagado | devuelto"
+        ENUM metodo_pago "efectivo | transferencia | bizum | tarjeta"
+        VARCHAR_150 concepto "nullable"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     FOTOGRAFIAS_GALERIA {
-        BIGINT id_fotografia PK
-        BIGINT id_sesion FK
-        VARCHAR nombre_archivo
-        VARCHAR ruta_almacenamiento
-        DATETIME fecha_subida
-        TEXT descripcion
+        BIGINT_UNSIGNED id PK
+        BIGINT_UNSIGNED sesion_id FK
+        VARCHAR_150 nombre_archivo
+        VARCHAR_255 ruta_almacenamiento UK
+        INT_UNSIGNED tamano_kb "nullable"
+        VARCHAR_255 descripcion "nullable"
+        TIMESTAMP created_at "fecha de subida"
+        TIMESTAMP updated_at
     }
 ```
 
-## 3. Entidades y atributos
+## 3. Relaciones y cardinalidades
 
-### Clientes
+| Relación | Tipo | Descripción | Borrado (ON DELETE) |
+|---|---|---|---|
+| `users` — `clientes` | 1:1 (0..1) | Cada cuenta con rol cliente tiene una ficha de cliente. La cuenta de la administradora no tiene ficha. | CASCADE: la ficha no existe sin su cuenta. |
+| `clientes` — `sesiones_citas` | 1:N | Un cliente solicita cero o varias sesiones; cada sesión pertenece a un único cliente. | RESTRICT: un cliente con sesiones no se borra, para conservar el historial. |
+| `sesiones_citas` — `servicios_fotograficos` | M:N | Una sesión incluye uno o varios servicios y un servicio forma parte de varias sesiones. Se resuelve con `sesion_servicio`. | — |
+| `sesiones_citas` — `sesion_servicio` | 1:N | Líneas de servicio de cada sesión. | CASCADE: la línea no tiene sentido sin su sesión. |
+| `servicios_fotograficos` — `sesion_servicio` | 1:N | Sesiones en las que se ha contratado el servicio. | RESTRICT: un servicio ya contratado no se borra; se desactiva (`disponible = false`). |
+| `sesiones_citas` — `pagos` | 1:N | Una sesión tiene cero o varios pagos (señal, pago final…). | RESTRICT: un registro económico no se elimina en cascada. |
+| `sesiones_citas` — `fotografias_galeria` | 1:N | Una sesión tiene cero o varias fotografías. | CASCADE: las fotografías pertenecen a la sesión. |
 
-Almacena los datos de los clientes registrados. El correo electrónico será único para evitar registros duplicados. La contraseña se almacenará mediante un hash, nunca en texto plano.
+## 4. Tabla intermedia con atributos propios
 
-- **PK:** `id_cliente`.
-- **UK:** `email`.
+`sesion_servicio` tiene clave primaria compuesta (`sesion_id`, `servicio_id`) y guarda las condiciones acordadas para cada servicio dentro de una sesión:
 
-### Servicios fotográficos
+- `precio_pactado`: precio acordado con el cliente. Al crear la sesión se copia de `precio_base`, pero después es independiente del catálogo.
+- `duracion_minutos`: duración acordada para ese servicio en esa sesión.
+- `extras_incluidos`: extras negociados (por ejemplo, fotos impresas).
 
-Contiene el catálogo de servicios que ofrece la fotógrafa, con su descripción, precio base, duración y disponibilidad.
-
-- **PK:** `id_servicio`.
-
-### Sesiones y citas
-
-Registra las solicitudes de sesiones, la fecha solicitada, la fecha confirmada cuando corresponda, su estado y las observaciones.
-
-- **PK:** `id_sesion`.
-- **FK:** `id_cliente` referencia a `CLIENTES(id_cliente)`.
-
-### Sesión-servicio
-
-Resuelve la relación muchos a muchos entre sesiones y servicios. Permite contratar varios servicios en una misma sesión y que un servicio se utilice en distintas sesiones.
-
-- **PK compuesta:** (`id_sesion`, `id_servicio`).
-- **FK:** `id_sesion` referencia a `SESIONES_CITAS(id_sesion)`.
-- **FK:** `id_servicio` referencia a `SERVICIOS_FOTOGRAFICOS(id_servicio)`.
-
-Los atributos `precio_pactado`, `duracion_minutos` y `extras_incluidos` corresponden a las condiciones acordadas para cada servicio dentro de una sesión.
-
-### Pagos
-
-Registra los pagos relacionados con las sesiones, incluyendo importe, fecha, estado y método de pago.
-
-- **PK:** `id_pago`.
-- **FK:** `id_sesion` referencia a `SESIONES_CITAS(id_sesion)`.
-
-### Fotografías de galería
-
-Guarda los metadatos de las fotografías asociadas a cada sesión. Los archivos de imagen se almacenarán en un servicio externo y en la base de datos se guardará su ruta o identificador de almacenamiento.
-
-- **PK:** `id_fotografia`.
-- **FK:** `id_sesion` referencia a `SESIONES_CITAS(id_sesion)`.
-
-## 4. Relaciones y cardinalidades
-
-- **Clientes — Sesiones:** un cliente puede solicitar ninguna o varias sesiones; cada sesión pertenece a un único cliente. Relación 1:N.
-- **Sesiones — Servicios:** una sesión puede incluir uno o varios servicios, y un servicio puede formar parte de varias sesiones. Relación N:M resuelta mediante `SESION_SERVICIO`.
-- **Sesiones — Pagos:** una sesión puede tener ninguno o varios pagos; cada pago pertenece a una única sesión. Relación 1:N.
-- **Sesiones — Fotografías:** una sesión puede tener ninguna o varias fotografías; cada fotografía pertenece a una única sesión. Relación 1:N.
+Si la fotógrafa cambia la tarifa de un servicio en el catálogo, las sesiones ya contratadas conservan su precio.
 
 ## 5. Justificación de la tercera forma normal (3FN)
 
-El modelo se plantea para cumplir la tercera forma normal:
+1. **1FN:** todos los atributos son atómicos. Los servicios de una sesión se representan como filas de `sesion_servicio` y las fotografías como filas de `fotografias_galeria`, no como listas dentro de una columna.
+2. **2FN:** la única clave compuesta está en `sesion_servicio`. Sus atributos (`precio_pactado`, `duracion_minutos`, `extras_incluidos`) dependen de la combinación completa sesión + servicio. El nombre o la descripción del servicio dependen solo de `servicio_id` y por eso permanecen en `servicios_fotograficos`.
+3. **3FN:** no hay dependencias transitivas entre atributos no clave. El email y la contraseña se almacenan solo en `users`; `clientes` guarda únicamente datos personales y se enlaza con `user_id`. Los datos del cliente no se repiten en `sesiones_citas` ni en `pagos`, que acceden a ellos mediante claves foráneas. El total de una sesión no se almacena porque se calcula a partir de sus líneas.
 
-1. **Primera forma normal (1FN):** cada atributo contiene un valor individual y no se almacenan listas de servicios o fotografías en una única columna.
-2. **Segunda forma normal (2FN):** en `SESION_SERVICIO`, los atributos propios de la contratación dependen de la clave compuesta completa (`id_sesion`, `id_servicio`), y no solo de una parte de ella.
-3. **Tercera forma normal (3FN):** los datos propios de clientes, servicios, sesiones, pagos y fotografías se guardan en sus entidades correspondientes. Se evitan dependencias transitivas entre atributos no clave.
+## 6. Seguridad y almacenamiento
 
-El precio y la duración pactados se guardan en `SESION_SERVICIO` para conservar las condiciones acordadas aunque posteriormente cambien los datos generales del catálogo.
-
-## 6. Consideraciones de seguridad y almacenamiento
-
-Las contraseñas se almacenarán mediante hashes seguros. El acceso a las sesiones, pagos y galerías deberá comprobar la identidad y los permisos del usuario.
-
-Las fotografías se guardarán en un servicio de almacenamiento externo, como Amazon S3 o Cloudinary. El acceso a las imágenes privadas deberá estar protegido; conocer una ruta o URL no debe permitir el acceso público sin autorización.
-
-Este documento define el diseño lógico inicial. La implementación física, las migraciones y las restricciones concretas se realizarán en fases posteriores del proyecto.
+- La contraseña se almacena como hash bcrypt (coste 12) y el modelo `User` la oculta en todas las respuestas JSON.
+- Los archivos de las fotografías se guardan en el disco privado de Laravel (`storage/app/private`), sin acceso público por URL. La API solo permite descargarlos a la administradora o al cliente propietario de la sesión. En el Hito 3, este almacenamiento se sustituye por Cloudinary.
