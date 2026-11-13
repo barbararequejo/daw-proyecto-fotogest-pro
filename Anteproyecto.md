@@ -15,17 +15,17 @@
 
 ### 1.1. Elevator pitch (100–150 palabras)
 
-FotoGest Pro será una aplicación web pensada para facilitar la organización de un pequeño negocio de fotografía. En el trabajo diario hay que atender a los clientes, gestionar las solicitudes de sesiones, tener claros los pagos y entregar las fotografías de cada encargo. Si esos datos se guardan en distintos sitios, cuesta más encontrar la información y llevar el seguimiento de cada trabajo. La propuesta consiste en reunir esas tareas en una sola aplicación. Desde ella, la fotógrafa podrá mantener actualizados sus servicios, revisar las solicitudes, organizar las sesiones, registrar los pagos y preparar galerías privadas. Los clientes tendrán una cuenta desde la que consultar sus sesiones y acceder a sus propias fotografías. La aplicación se utilizará como complemento de la web profesional, a través de un enlace al área de clientes, sin tener que sustituir la web actual.
+FotoGest Pro es una aplicación web para la gestión de pequeños negocios de fotografía. El trabajo diario de un estudio implica atender a los clientes, gestionar las solicitudes de sesiones, controlar los pagos y entregar las fotografías de cada encargo. Cuando estos datos están repartidos en distintas herramientas, su consulta y seguimiento resultan poco eficientes. FotoGest Pro centraliza estas operaciones en una sola aplicación. Desde el perfil de administración, la fotógrafa mantiene el catálogo de servicios y sus tarifas, revisa las solicitudes, organiza las sesiones, registra los pagos y prepara las galerías privadas. Cada cliente dispone de una cuenta desde la que consulta sus sesiones y descarga sus propias fotografías. La aplicación complementa la web profesional existente mediante un enlace al área de clientes, sin sustituirla.
 
 ### 1.2. Público objetivo y contexto de uso
 
-El proyecto está dirigido, sobre todo, a fotógrafos autónomos y a las personas que contratan sus servicios. Se parte de una situación habitual en un negocio pequeño: tener que controlar varias sesiones a la vez, recordar en qué estado está cada una y entregar las imágenes de forma privada. Por eso, la aplicación busca reunir la información más importante y hacer que sea más fácil consultarla.
+El proyecto se dirige a fotógrafos autónomos y a los clientes que contratan sus servicios. Su contexto de uso es el de un negocio pequeño que gestiona varias sesiones a la vez, controla el estado de cada reserva y entrega las imágenes de forma privada. La aplicación reúne esta información en un único entorno y facilita su consulta.
 
-- **Administradora (fotógrafa):** gestionará los servicios y tarifas, revisará las solicitudes, organizará las sesiones, registrará los pagos y subirá las fotografías a las galerías privadas.
-- **Usuario registrado (cliente):** podrá solicitar sesiones, consultar el estado de sus reservas y pagos, y ver o descargar las fotografías disponibles en su espacio privado.
-- **Público / invitado:** podrá consultar el catálogo de servicios y una selección pública del portfolio, además de acceder al formulario de registro.
+- **Administradora (fotógrafa):** gestiona los servicios y las tarifas, revisa las solicitudes, organiza las sesiones, registra los pagos y sube las fotografías a las galerías privadas.
+- **Usuario registrado (cliente):** solicita sesiones, consulta el estado de sus reservas y pagos, y visualiza o descarga las fotografías de su espacio privado.
+- **Público / invitado:** consulta el catálogo de servicios y accede al formulario de registro.
 
-Se podrá entrar desde el navegador de un ordenador, una tableta o un móvil. La web profesional seguirá funcionando como hasta ahora y tendrá un enlace para acceder a esta zona privada. El objetivo no es crear una web nueva ni sustituir herramientas de contabilidad o edición de fotografías, sino resolver algunas tareas de gestión que forman parte del trabajo diario.
+El acceso se realiza desde el navegador de un ordenador, una tableta o un móvil. La web profesional mantiene su funcionamiento actual e incorpora un enlace al área privada. La aplicación no sustituye a las herramientas de contabilidad ni de edición fotográfica: su alcance son las tareas de gestión de clientes, sesiones, pagos y entrega de imágenes.
 
 ---
 
@@ -37,15 +37,16 @@ Se podrá entrar desde el navegador de un ordenador, una tableta o un móvil. La
 |---|---|---|---|
 | Consultar servicios públicos | Sí | Sí | Sí |
 | Registrarse | No necesario | Ya registrado | Sí |
-| Solicitar una sesión | Sí, puede gestionarla | Sí | No |
-| Consultar y actualizar sesiones | Todas | Solo las propias | No |
+| Solicitar una sesión | Sí, en nombre de un cliente | Sí | No |
+| Consultar sesiones | Todas | Solo las propias | No |
+| Cambiar el estado de una sesión | Sí | No | No |
 | Registrar o modificar pagos | Sí | No | No |
-| Consultar el estado de pagos | Todos los registrados | Solo los propios | No |
+| Consultar el estado de pagos | Todos | Solo los propios | No |
 | Subir fotografías a una galería | Sí | No | No |
-| Ver y descargar fotografías | Puede gestionarlas | Solo las de sus sesiones | No |
+| Ver y descargar fotografías | Todas | Solo las de sus sesiones | No |
 | Acceder al panel de administración | Sí | No | No |
 
-La aplicación comprobará los permisos antes de mostrar la información privada. De esta forma, cada cliente solo podrá consultar sus propios datos y las galerías de sus sesiones.
+La API comprueba el rol y la titularidad de cada recurso antes de devolver información privada. Cada cliente accede solo a sus propios datos y a las galerías de sus sesiones; cualquier intento de acceder a un recurso ajeno recibe la respuesta 403 Forbidden.
 
 ### 2.2. Catálogo formal de casos de uso
 
@@ -132,7 +133,7 @@ La aplicación comprobará los permisos antes de mostrar la información privada
 4. El cliente inicia sesión y abre el apartado de sus sesiones o pagos.
 5. El sistema muestra el estado de los pagos vinculados únicamente a sus propias sesiones.
 
-**Resultado:** queda registrado el seguimiento manual de los pagos. En el MVP no se procesarán cobros con tarjeta de forma automática.
+**Resultado:** queda registrado el seguimiento manual de los pagos. El MVP no incluye pasarela de pago ni procesa cobros con tarjeta.
 
 #### CU-07. Subir, consultar y descargar fotografías
 
@@ -154,9 +155,9 @@ La aplicación comprobará los permisos antes de mostrar la información privada
 
 ### 2.3. Alcance del MVP (Hito 3, diciembre)
 
-El **MVP** será la primera versión que se pueda utilizar de principio a fin. Para llegar a ella, se dará prioridad a las funciones básicas: gestionar los servicios y las sesiones, registrar los pagos y permitir que cada cliente consulte su galería privada. Las mejoras que no sean imprescindibles quedarán para más adelante.
+El MVP es la primera versión utilizable de principio a fin. Prioriza las funciones básicas: la gestión de servicios y sesiones, el registro de pagos y el acceso de cada cliente a su galería privada.
 
-**Incluido en esta primera versión:**
+**Incluido en el MVP:**
 
 - Registro e inicio de sesión con permisos diferenciados por rol.
 - Catálogo público de servicios fotográficos.
@@ -164,72 +165,68 @@ El **MVP** será la primera versión que se pueda utilizar de principio a fin. P
 - Alta, consulta, modificación y desactivación de servicios.
 - Solicitud de sesiones por parte de clientes registrados.
 - Gestión de solicitudes y actualización del estado de las sesiones.
-- Asociación de una sesión con uno o varios servicios, conservando el precio y la duración acordados.
+- Asociación de una sesión con uno o varios servicios, con el precio y la duración pactados.
 - Registro manual de pagos y consulta de su estado.
 - Galerías privadas asociadas a sesiones, con acceso y descarga protegidos.
 - Base de datos persistente y publicación de la aplicación mediante HTTPS.
 
-**Fuera de esta primera versión:**
+**Fuera del MVP:**
 
 - Cobros con tarjeta y reembolsos automáticos.
 - Edición de fotografías dentro de la aplicación.
 - Aplicación móvil nativa.
-- Sincronización automática con calendarios externos.
-- Integración con programas externos de contabilidad.
+- Sincronización con calendarios externos.
+- Integración con programas de contabilidad.
 - Campañas de marketing y envíos masivos.
-- Automatizaciones avanzadas e informes complejos, salvo que se completen las funciones principales y exista tiempo suficiente.
 
-Primero se desarrollarán y probarán estas funciones principales. Solo después se valorará añadir otras características. La aplicación será independiente de la web pública, desde la que se podrá acceder mediante un enlace.
+La aplicación es independiente de la web pública del negocio, que enlaza con el área de clientes.
 
 ---
 
 ## 3. Modelo de datos
 
-La información de la aplicación se organizará en una base de datos. El diagrama Entidad-Relación se incluirá en `docs/der.md` y recogerá las entidades principales y la forma en que se relacionan:
+La información se almacena en una base de datos relacional MySQL. El diagrama entidad-relación completo está en [`docs/der.md`](docs/der.md) y el diccionario de datos en [`docs/diccionario_datos.md`](docs/diccionario_datos.md).
 
-- **`clientes`:** almacena los datos necesarios de cada cliente.
-- **`servicios_fotograficos`:** contiene los servicios ofrecidos, con información como nombre, descripción, precio y duración orientativa.
-- **`sesiones_citas`:** recoge las solicitudes y sesiones, su fecha y su estado, y las relaciona con el cliente correspondiente.
-- **`pagos`:** registra los pagos relacionados con una sesión, con datos como importe, fecha y estado.
-- **`fotografias_galeria`:** almacena los datos de las fotografías y su relación con la sesión a la que pertenecen.
+**Entidades de negocio:**
+
+- **`clientes`:** datos personales y de contacto de cada cliente.
+- **`servicios_fotograficos`:** catálogo de servicios con nombre, descripción, precio base, duración y disponibilidad.
+- **`sesiones_citas`:** solicitudes y sesiones, con su fecha, lugar y estado, vinculadas al cliente.
+- **`pagos`:** pagos de cada sesión, con importe, fecha, estado y método de pago.
+- **`fotografias_galeria`:** metadatos de las fotografías y su vinculación con la sesión.
+
+**Tabla técnica:** `users` guarda el email, el hash de la contraseña y el rol (`admin` o `cliente`) de cada cuenta. Cada cliente se enlaza con su cuenta mediante `clientes.user_id`. Esta tabla no computa como entidad de negocio.
 
 ### Relaciones principales
 
-- **Relación 1:N entre `clientes` y `sesiones_citas`:** un cliente puede tener varias sesiones, pero cada sesión pertenece a un único cliente.
-- **Relación M:N entre `sesiones_citas` y `servicios_fotograficos`:** una sesión puede incluir varios servicios y un servicio puede formar parte de distintas sesiones. Esta relación se resolverá mediante la tabla intermedia `sesion_servicio`, que incluirá `precio_pactado`, `duracion_minutos` y `extras_incluidos`. Estos atributos permiten conservar las condiciones acordadas para cada servicio incluido en una sesión, aunque el catálogo cambie posteriormente.
-- **Relación 1:N entre `sesiones_citas` y `pagos`:** una sesión podrá tener uno o varios registros de pago.
-- **Relación 1:N entre `sesiones_citas` y `fotografias_galeria`:** una sesión podrá tener varias fotografías asociadas.
+- **1:N entre `clientes` y `sesiones_citas`:** un cliente tiene cero o varias sesiones; cada sesión pertenece a un único cliente.
+- **M:N entre `sesiones_citas` y `servicios_fotograficos`:** se resuelve con la tabla intermedia `sesion_servicio`, que incluye los atributos propios `precio_pactado`, `duracion_minutos` y `extras_incluidos`. Estos atributos conservan las condiciones acordadas aunque el catálogo cambie después.
+- **1:N entre `sesiones_citas` y `pagos`:** una sesión tiene cero o varios pagos.
+- **1:N entre `sesiones_citas` y `fotografias_galeria`:** una sesión tiene cero o varias fotografías.
 
 ### Justificación de la tercera forma normal (3FN)
 
-La base de datos se diseñará siguiendo la tercera forma normal (3FN). El propósito es evitar guardar varias veces la misma información y hacer que los datos sean más fáciles de mantener:
+El modelo relacional sigue los principios de normalización hasta la tercera forma normal (3FN). Esta organización reduce la redundancia de información y evita anomalías durante las operaciones de inserción, actualización y eliminación de registros.
 
-- **Primera forma normal (1FN):** cada campo almacenará un único valor. Los servicios contratados y las fotografías no se guardarán como listas dentro de una misma columna.
-- **Segunda forma normal (2FN):** los atributos de la tabla intermedia `sesion_servicio` dependerán de la combinación de sesión y servicio a la que pertenecen.
-- **Tercera forma normal (3FN):** los datos propios de clientes, servicios, sesiones, pagos y fotografías se guardarán en sus tablas correspondientes, evitando repetir información que pertenece a otra entidad.
-
-En `docs/der.md` se detallarán las claves primarias y foráneas, los tipos de datos y las cardinalidades. Las tablas técnicas necesarias para el inicio de sesión y la gestión de roles no sustituirán a las entidades de negocio indicadas.
+- **1FN:** cada atributo contiene un único valor. Los servicios contratados y las fotografías se representan como filas relacionadas, no como listas dentro de una columna.
+- **2FN:** los atributos de `sesion_servicio` dependen de la clave compuesta completa (`sesion_id`, `servicio_id`).
+- **3FN:** no existen dependencias transitivas. El email y la contraseña están solo en `users`, y los datos de cada entidad permanecen en su propia tabla, sin duplicarse en las demás.
 
 ---
 
-## 4. Stack tecnológico previsto
+## 4. Stack tecnológico
 
-Para desarrollar la aplicación se propone utilizar las siguientes tecnologías. Cada una tendrá una función concreta: guardar la información, gestionar las operaciones de la aplicación o mostrar las pantallas que utilizarán los usuarios.
+- **Base de datos: MySQL 8.** Almacena los datos en tablas relacionadas, con claves foráneas y restricciones `UNIQUE` y `CHECK` que garantizan la integridad.
+- **Backend: Laravel 13 (PHP 8.3).** Implementa la API REST por capas (rutas, controladores, servicios y modelos), valida los datos y aplica la autenticación con JWT y los permisos de cada rol.
+- **Frontend: Vue.js.** Construye el catálogo público, el área privada del cliente y el panel de administración, y consume la API REST.
+- **Alojamiento: Railway.** Publica la aplicación y la base de datos con persistencia y HTTPS.
+- **Almacenamiento de fotografías: Cloudinary.** Guarda los archivos de imagen fuera del servidor de la aplicación.
 
-- **Motor de base de datos: MySQL.** Se utilizará para guardar la información de clientes, servicios, sesiones, pagos y fotografías en tablas relacionadas.
-- **Backend API REST: Laravel con PHP.** Se encargará de procesar las solicitudes, validar los datos, gestionar las operaciones y aplicar los permisos de cada rol. También permitirá crear una API REST para comunicar el backend con la interfaz.
-- **Frontend: Vue.js.** Se utilizará para construir las pantallas del catálogo público, el área privada del cliente y el panel de administración.
-- **Alojamiento cloud: Railway.** Se propone como plataforma inicial para publicar la aplicación y configurar la base de datos. El despliegue deberá mantener los datos de forma persistente y utilizar HTTPS. Si durante la implementación se detecta alguna limitación, se valorará Render como alternativa.
-
-La aplicación estará separada de la web pública del negocio, que enlazará con el área de clientes. Por seguridad, las contraseñas y las claves de configuración no se guardarán en GitHub, sino en variables de entorno.
+Las credenciales y claves de configuración se gestionan con variables de entorno (`.env`), excluidas del repositorio. El archivo `backend/.env.example` recoge los nombres de las variables con valores ficticios.
 
 ---
 
-## 5. Selección tentativa de Add-ons (mínimo 2)
+## 5. Selección de add-ons
 
-Se proponen dos funciones adicionales que podrían mejorar la aplicación. No serán prioritarias: primero habrá que terminar las funciones básicas y comprobar que funcionan correctamente.
-
-- [x] **Almacenamiento desacoplado de fotografías en AWS S3 o Cloudinary (+0.5).** Se valorará utilizar un servicio externo para guardar las fotografías en lugar de depender únicamente del servidor de la aplicación. El acceso a las galerías se limitará a los clientes autorizados.
-- [x] **Generación de informes PDF/Excel (+0.5).** Se plantea añadir un informe sencillo con un resumen de las sesiones y los pagos registrados, para facilitar la consulta de la actividad del negocio. No sustituirá a un programa de contabilidad ni a la facturación oficial.
-
-La prioridad será completar, probar y documentar las funciones básicas. La selección de add-ons podrá revisarse según el tiempo disponible y los requisitos técnicos del módulo.
+- [x] **Almacenamiento desacoplado de fotografías en Cloudinary.** Los archivos se guardan en Cloudinary en lugar de en el servidor de la aplicación. Se elige Cloudinary frente a AWS S3 porque su plan gratuito cubre el volumen del proyecto, dispone de un SDK para Laravel y genera automáticamente miniaturas para las galerías. Las imágenes son privadas y solo se entregan al cliente propietario de la sesión, a través de la API. En el Hito 2, la API guarda los archivos en el disco privado de Laravel; en el Hito 3, ese disco se sustituye por Cloudinary.
+- [x] **Generación de informes PDF/Excel.** Resumen de las sesiones y los pagos registrados para consultar la actividad del negocio. Tiene carácter informativo y no sustituye a la facturación oficial.
