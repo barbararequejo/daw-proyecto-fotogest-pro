@@ -91,15 +91,13 @@ La API queda disponible en `http://127.0.0.1:8000/api/v1`.
 
 ## Cuentas de prueba
 
-Todas las cuentas tienen la contraseña `Password123`.
+| Email | Contraseña | Rol |
+|---|---|---|
+| admin@cifpaviles.es | `Admin1234!` | Administradora |
+| user1@cifpaviles.es | `User1234!` | Cliente |
+| user2@cifpaviles.es | `User1234!` | Cliente |
 
-| Email | Rol |
-|---|---|
-| admin@cifpaviles.es | Administradora |
-| user1@cifpaviles.es | Cliente |
-| user2@cifpaviles.es | Cliente |
-
-Los seeders crean además 8 clientes más, 10 servicios, 12 sesiones, 17 líneas de `sesion_servicio`, 14 pagos y 15 fotografías.
+Los seeders crean además 8 clientes más (también con la contraseña `User1234!`), 10 servicios, 12 sesiones, 17 líneas de `sesion_servicio`, 14 pagos y 15 fotografías.
 
 ## Pruebas de la API
 
