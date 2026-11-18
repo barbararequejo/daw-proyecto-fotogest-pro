@@ -54,7 +54,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@cifpaviles.es\",\n  \"password\": \"Password123\"\n}",
+              "raw": "{\n  \"email\": \"admin@cifpaviles.es\",\n  \"password\": \"Admin1234!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -108,7 +108,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user1@cifpaviles.es\",\n  \"password\": \"Password123\"\n}",
+              "raw": "{\n  \"email\": \"user1@cifpaviles.es\",\n  \"password\": \"User1234!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -162,7 +162,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user2@cifpaviles.es\",\n  \"password\": \"Password123\"\n}",
+              "raw": "{\n  \"email\": \"user2@cifpaviles.es\",\n  \"password\": \"User1234!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -323,7 +323,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\",\n  \"nombre\": \"Elena\",\n  \"apellidos\": \"Suárez Llano\",\n  \"telefono\": \"611222333\"\n}",
+              "raw": "{\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"User1234!\",\n  \"password_confirmation\": \"User1234!\",\n  \"nombre\": \"Elena\",\n  \"apellidos\": \"Suárez Llano\",\n  \"telefono\": \"611222333\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -378,7 +378,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user1@cifpaviles.es\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\",\n  \"nombre\": \"Lucía\",\n  \"apellidos\": \"Fernández\"\n}",
+              "raw": "{\n  \"email\": \"user1@cifpaviles.es\",\n  \"password\": \"User1234!\",\n  \"password_confirmation\": \"User1234!\",\n  \"nombre\": \"Lucía\",\n  \"apellidos\": \"Fernández\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

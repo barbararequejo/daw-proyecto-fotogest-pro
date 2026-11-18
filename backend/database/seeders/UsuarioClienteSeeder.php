@@ -7,18 +7,20 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * Cuentas de prueba. Todas usan la contraseña "Password123".
+ * Cuentas de prueba: la administradora usa "Admin1234!" y los clientes "User1234!".
  * updateOrCreate hace que el seeder se pueda ejecutar varias veces sin duplicar datos.
  */
 class UsuarioClienteSeeder extends Seeder
 {
-    public const PASSWORD_DEMO = 'Password123';
+    public const PASSWORD_ADMIN = 'Admin1234!';
+
+    public const PASSWORD_CLIENTE = 'User1234!';
 
     public function run(): void
     {
         User::updateOrCreate(
             ['email' => 'admin@cifpaviles.es'],
-            ['password' => self::PASSWORD_DEMO, 'rol' => 'admin']
+            ['password' => self::PASSWORD_ADMIN, 'rol' => 'admin']
         );
 
         $clientes = [
@@ -37,7 +39,7 @@ class UsuarioClienteSeeder extends Seeder
         foreach ($clientes as [$email, $nombre, $apellidos, $telefono]) {
             $user = User::updateOrCreate(
                 ['email' => $email],
-                ['password' => self::PASSWORD_DEMO, 'rol' => 'cliente']
+                ['password' => self::PASSWORD_CLIENTE, 'rol' => 'cliente']
             );
 
             Cliente::updateOrCreate(
